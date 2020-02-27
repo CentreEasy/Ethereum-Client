@@ -1,0 +1,14 @@
+{
+  "name": "easy-ethereum-client",
+  "version": "0.0.20",
+  "description": "Layer that connects Database and queue layer. Functions about transactions and the related actions",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "bluebird": "^3.5.4",
+    "mongoose": "^5.4.17",
+    "easy-ethereum-client": "file:../../Ethereum Client"
+  },
+  "author": "Centre Easy",
+  "license": "MIT"
+}

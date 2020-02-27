@@ -1,0 +1,21 @@
+{
+  "name": "easy-ethereum-client",
+  "version": "0.1.6",
+  "description": "Layer that connects Database and queue layer. Functions about transactions and the related actions",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "amqplib": "0.5.3",
+    "bluebird": "3.5.4",
+    "lodash": "4.17.11",
+    "mongoose": "5.4.17",
+    "rabbot": "2.1.0",
+    "rabbus": "0.8.2",
+    "redis": "2.8.0",
+    "truffle-hdwallet-provider": "0.0.6",
+    "util": "0.11.1",
+    "web3": "1.0.0-beta.51"
+  },
+  "author": "Centre Easy",
+  "license": "MIT"
+}

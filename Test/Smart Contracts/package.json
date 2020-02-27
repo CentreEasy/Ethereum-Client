@@ -1,0 +1,21 @@
+{
+  "name": "welicense-smart-contracts",
+  "license": "UNLICENSED",
+  "version": "1.0.0",
+  "description": "Simple file upload to IPFS demo with Smart Contract.",
+  "author": "Centre Easy",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/centreeasy/we-licens3d.git"
+  },
+  "dependencies": {
+    "truffle": "5.1.12",
+    "truffle-hdwallet-provider": "0.0.6",
+    "web3": "1.0.0-beta.52"
+  },
+  "scripts": {
+    "version": "truffle version",
+    "migrate": "truffle migrate --reset",
+    "compile": "truffle compile"
+  }
+}

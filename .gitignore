@@ -1,0 +1,9 @@
+.idea/
+blockchain/
+contracts.json
+
+!Alastria/contracts.json
+/Send Transaction Node/config.js
+
+Cache/node_modules/
+Cache/package-lock.json
