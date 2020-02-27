@@ -7,7 +7,7 @@
   "dependencies": {
     "amqplib": "0.5.3",
     "bluebird": "3.5.4",
-    "lodash": "4.17.11",
+    "lodash": "4.17.15",
     "mongoose": "5.4.17",
     "rabbot": "2.1.0",
     "rabbus": "0.8.2",
