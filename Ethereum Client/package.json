@@ -1,6 +1,6 @@
 {
   "name": "easy-ethereum-client",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Layer that connects Database and queue layer. Functions about transactions and the related actions",
   "main": "index.js",
   "scripts": {},

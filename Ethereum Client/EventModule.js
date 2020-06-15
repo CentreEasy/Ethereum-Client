@@ -4,6 +4,11 @@ const Action = require ('./models/action');
 const ActionGroup = require('./models/actiongroup');
 const ParserModule = require('./ParserModule');
 
+var quiet=false;
+function setQuiet(quietp){
+    quiet=quietp;
+}
+
 currentEvents = 0;
 
 transactionEvents = new events.EventEmitter();
@@ -73,7 +78,7 @@ async function checkActionGroupCompleted(actionObject, transactionObj){
 
 
 transactionEvents.on('hash',async function(obj){
-    console.log('transaction: ' + obj.transactionId + ' event ' + obj.event.name);
+    if (!quiet) console.log('transaction: ' + obj.transactionId + ' event ' + obj.event.name);
 
     let transaction = await Transaction.findOne({_id: obj.transactionId});
 
@@ -122,13 +127,13 @@ transactionEvents.on('hash',async function(obj){
     //         }
     //     }
     // }catch (e) {
-    //     console.log("Error sending transaction order");
+    //     if (!quiet) console.log("Error sending transaction order");
     // }
 
 });
 
 transactionEvents.on('error',async function(obj){
-    console.log('transaction: '+ obj.transactionId +' event '+ obj.event.name);
+    if (!quiet) console.log('transaction: '+ obj.transactionId +' event '+ obj.event.name);
 
     let transaction = await Transaction.findOne({_id: obj.transactionId});
 
@@ -158,12 +163,12 @@ transactionEvents.on('error',async function(obj){
 });
 
 transactionEvents.on('validated', async function(obj){
-    console.log('transaction: '+ obj.transactionId +' event '+ obj.event.name);
+    if (!quiet) console.log('transaction: '+ obj.transactionId +' event '+ obj.event.name);
     let updateTransaction=null;
     try {
         updateTransaction = await Transaction.updateOne({"_id": obj.transactionId}, {$set: {status: Transaction.STATUS_SUCCESS}});
     }catch (e) {
-        console.log('error on event validated: '+e.message)
+        if (!quiet) console.log('error on event validated: '+e.message)
     }
 
     if (updateTransaction.nModified === 0) {
@@ -315,8 +320,8 @@ transactionEvents.on('validated', async function(obj){
 
 transactionEvents.on('firstValidation', async function(obj){
 
-    console.log('---- First Validation Event ----');
-    console.log('FVE --> transaction: ' + obj.transactionId + ' event ' + obj.event.name);
+    if (!quiet) console.log('---- First Validation Event ----');
+    if (!quiet) console.log('FVE --> transaction: ' + obj.transactionId + ' event ' + obj.event.name);
 
     try{
         if(typeof obj.hasOrder !== "undefined" && obj.hasOrder){
@@ -357,7 +362,7 @@ transactionEvents.on('firstValidation', async function(obj){
             }
         }
     }catch (e) {
-        console.log("Error sending transaction order");
+        if (!quiet) console.log("Error sending transaction order");
     }
 });
 
@@ -384,3 +389,4 @@ exports.emit = emit;
 exports.getCurrentEvents = () => {
     return currentEvents;
 };
+exports.setQuiet = setQuiet;

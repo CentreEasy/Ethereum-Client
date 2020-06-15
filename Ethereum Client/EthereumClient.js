@@ -13,6 +13,7 @@ var Web3 = require('web3');
 web3 = new Web3(new Web3.providers.HttpProvider(""));
 var HDWalletProvider = require("truffle-hdwallet-provider");
 
+var quiet=false;
 var DBConfig="";
 var RabbitMQConfig={};
 var network= {};
@@ -101,7 +102,7 @@ function start(){
 
         // basic error handler
         actionReceiver.receive(function(msga, propsa, actionsa, nexta){
-            console.log("action received with name: " + msga.event.name);
+            if (!quiet) console.log("action received with name: " + msga.event.name);
             EventModule.emit(msga.event.name, msga);
             actionsa.ack();
         });
@@ -118,12 +119,12 @@ function start(){
 }
 
 async function sendTransaction(transaction){
-    //console.log("Invalidating cache");
+    //if (!quiet) console.log("Invalidating cache");
     Cache.invalidate(transaction.toAddress, transaction.functionName, transaction.params);
-    console.log("  Function: " + transaction.functionName + ". Parameters: " + JSON.stringify(transaction.params));
+    if (!quiet) console.log("  Function: " + transaction.functionName + ". Parameters: " + JSON.stringify(transaction.params));
 
     transactionSender.send(transaction, function(){
-        console.log("published transaction "+transaction.transactionId);
+        if (!quiet) console.log("published transaction "+transaction.transactionId);
     });
 }
 
@@ -172,11 +173,11 @@ async function getTransactionData(functionName, parameters = [], contractValue, 
 function call(functionName, parameters = [], contractValue,fromAddress=null) {
     return new Promise( async function(resolve,reject){
 
-        console.log('Call:');
-        console.log('    function: '+functionName);
-        console.log('    param: '+JSON.stringify(parameters));
-        console.log('    contract: '+contractValue);
-        console.log('    from: '+fromAddress);
+        if (!quiet) console.log('Call:');
+        if (!quiet) console.log('    function: '+functionName);
+        if (!quiet) console.log('    param: '+JSON.stringify(parameters));
+        if (!quiet) console.log('    contract: '+contractValue);
+        if (!quiet) console.log('    from: '+fromAddress);
 
         let senderAddress=fromAddress;
 
@@ -184,7 +185,7 @@ function call(functionName, parameters = [], contractValue,fromAddress=null) {
             var wallet = getMainHdWallet();
             senderAddress = wallet.address;
         }
-        console.log('    sender: '+senderAddress);
+        if (!quiet) console.log('    sender: '+senderAddress);
 
         let contractInfo = await ContractModule.getContractAbi(contractValue.toString());
         if(!contractInfo) return reject(new Error('Contract Information Not Found in Database'));
@@ -194,7 +195,7 @@ function call(functionName, parameters = [], contractValue,fromAddress=null) {
         let isInCache = await Cache.exists(contract.address, functionName, parameters);
         if (isInCache) {
             let cache_value = await Cache.get(contract.address, functionName, parameters);
-            //console.log("Got value from cache!");
+            //if (!quiet) console.log("Got value from cache!");
             resolve(cache_value);
         } else {
             var callData = contract.methods[functionName].apply(null, parameters).encodeABI();
@@ -205,9 +206,9 @@ function call(functionName, parameters = [], contractValue,fromAddress=null) {
             });
 
             callRequester.request(msg,function (response) {
-                console.log("    response: " + JSON.stringify(response));
+                if (!quiet) console.log("    response: " + JSON.stringify(response));
                 var out = web3.eth.abi.decodeParameters(contract.jsonInterface.abi.methods[functionName].getOutputs(), response);
-                //console.log("Setting value into cache");
+                //if (!quiet) console.log("Setting value into cache");
                 Cache.set(contract.address, functionName, parameters, out);
                 resolve(out);
             });
@@ -224,12 +225,14 @@ function getMainHdWallet(){
     return {address: address, privateKey: hdWallet.wallets[address].getPrivateKey()};
 }
 
-function config(RabbitMQConfigp,networkp,projectp,DBConfigp,Actionthreads){
+function config(RabbitMQConfigp,networkp,projectp,DBConfigp,Actionthreads,quietp=false){
     RabbitMQConfig= RabbitMQConfigp;
     network= networkp;
     project= projectp;
     DBConfig=DBConfigp;
     ActionThreads=Actionthreads;
+    quiet=quietp;
+    EventModule.setQuiet(quiet);
 }
 
 function setCacheConfig(cacheConfig) {
